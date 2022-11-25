@@ -8,8 +8,8 @@
 .vscode/
 
 # output
-.vcd
+*.vcd
 
 # testbech
-tb
+*tb
 *tb.v
