@@ -1,0 +1,15 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Bb]in
+
+
+# Visual Studio Code
+.vscode/
+
+# output
+.vcd
+
+# testbech
+tb
+*tb.v
