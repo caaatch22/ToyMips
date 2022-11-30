@@ -27,7 +27,7 @@ module cp0_reg(
     output reg                   timer_interrupt_o
 );
 
-  always @(posedge clk) begin
+  always @(posedge clk or posedge rst) begin
     if(rst == `RstEnable) begin
         count_o              <= `ZeroWord;
         compare_o            <= `ZeroWord;

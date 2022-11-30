@@ -26,8 +26,8 @@
 `define NoFlush             1'b0
 
 // instruction
-`define InstValid           1'b1
-`define InstInvalid         1'b0 
+`define InstValid           1'b0
+`define InstInvalid         1'b1
 
 `define EXE_SPECIAL_INST    6'b000000
 `define EXE_REGIMM_INST     6'b000001
