@@ -30,6 +30,17 @@ module ex (
 	input [`RegBus]           mem_lo_i,
 	input                     mem_whilo_i,
 
+    // forward from mem, wb to solve hazard of cp0
+    input                     mem_cp0_reg_we,
+    input                     mem_cp0_reg_waddr,
+    input                     mem_cp0_reg_data,
+    input                     wb_cp0_reg_we,
+    input                     wb_cp0_reg_waddr,
+    input                     wb_cp0_reg_data,
+
+    input                     cp0_reg_data_i,
+    input                     cp0_reg_raddr_o,
+
     // connect with module div
 	input [`DoubleRegBus]     div_result_i,
 	input                     div_ready_i,
@@ -53,6 +64,10 @@ module ex (
     output reg[`RegBus]       div_opdata2_o,
     output reg                div_start_o,
     output reg                signed_div_o,
+
+    output reg                cp0_reg_we_o,
+    output reg[4:0]           cp0_reg_waddr_o,
+    output reh[`RegBus]       cp0_reg_data_o,
 
     output reg                stallreq
 
@@ -217,6 +232,19 @@ module ex (
             `EXE_MFLO_OP: move_res <= LO;
             `EXE_MOVZ_OP: move_res <= reg1_i;
             `EXE_MOVZ_OP: move_res <= reg1_i;
+            `EXE_MFC0_OP: begin
+                cp0_reg_raddr_o    <= inst_i[15:11];
+                move_res           <= cp0_reg_data_i;
+                if( mem_cp0_reg_we == `WriteEnable &&
+                    mem_cp0_reg_waddr == inst_i[15:11] ) begin
+	   			    move_res       <= mem_cp0_reg_data;
+                end else if( wb_cp0_reg_we == `WriteEnable &&
+                            wb_cp0_reg_waddr == inst_i[15:11] ) begin
+	   				move_res       <= wb_cp0_reg_data;
+	   		    end
+            end  	
+	   	default : begin
+	   	end
         endcase
     end
   end
@@ -332,5 +360,21 @@ module ex (
         lo_o    <= `ZeroWord;
     end
   end
+
+ always @ (*) begin
+    if(rst == `RstEnable) begin
+	    cp0_reg_waddr_o <= 5'b00000;
+		cp0_reg_we_o    <= `WriteDisable;
+		cp0_reg_data_o  <= `ZeroWord;
+	end else if(aluop_i == `EXE_MTC0_OP) begin
+        cp0_reg_waddr_o <= inst_i[15:11];
+		cp0_reg_we_     <= `WriteEnable;
+		cp0_reg_data_o  <= reg1_i;
+    end else begin
+	    cp0_reg_waddr_o <= 5'b00000;
+        cp0_reg_we_o    <= `WriteDisable;
+        cp0_reg_data_o  <= `ZeroWord;
+	end				
+ end		
 
 endmodule
