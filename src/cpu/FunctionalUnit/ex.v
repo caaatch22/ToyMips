@@ -15,6 +15,9 @@ module ex (
 
     input [`RegBus]           inst_i,            // for lw, sw
 
+	input [31:0]              excepttype_i,
+	input [`RegBus]           cur_inst_addr_i,
+
     // from HI、LO register
     input [`RegBus]           hi_i,
     input [`RegBus]           lo_i,
@@ -70,6 +73,10 @@ module ex (
     output reg[4:0]           cp0_reg_waddr_o,
     output reg[`RegBus]       cp0_reg_data_o,
 
+	output [31:0]             excepttype_o,
+	output                    is_in_delayslot_o,
+	output [`RegBus]          cur_inst_addr_o,	
+
     output reg                stallreq
 
 );
@@ -93,13 +100,20 @@ module ex (
   wire[`RegBus]       opdata2_mult;
   wire[`DoubleRegBus] hilo_tmp;
 
-  reg stallreq_for_div;
+  reg                 stallreq_for_div;
+
+  reg                 trapassert;
+  reg                 ovassert;
  
  // for load, store
   assign aluop_o = aluop_i;
   // reg1_i is the base reg for lw,sw
   assign mem_addr_o = reg1_i + {{16{inst_i[15]}}, inst_i[15:0]};
   assign reg2_o  = reg2_i;
+
+  assign excepttype_o      = {excepttype_i[31:12],ovassert,trapassert,excepttype_i[9:8],8'h00};
+  assign is_in_delayslot_o = is_in_delayslot_i;
+  assign cur_inst_addr_o   = cur_inst_addr_i;
 
   // phase 1: ALUop
   
@@ -160,8 +174,8 @@ module ex (
   
     assign reg1_i_not = ~reg1_i;
   
-  // arithmetic_res;
-  always @ (*) begin
+    // arithmetic_res;
+    always @ (*) begin
         if (rst == `RstEnable) arithmetic_res = `ZeroWord;
         else begin
             case (aluop_i)
@@ -207,6 +221,39 @@ module ex (
         end
     end
 
+    // trap
+    always @ (*) begin
+		if(rst == `RstEnable) begin
+			trapassert <= `TrapNotAssert;
+		end else begin
+			trapassert <= `TrapNotAssert;
+			case (aluop_i)
+			    `EXE_TEQ_OP, `EXE_TEQI_OP: begin
+					if(reg1_i == reg2_i) begin
+						trapassert <= `TrapAssert;
+					end
+				end
+				`EXE_TGE_OP, `EXE_TGEI_OP, `EXE_TGEIU_OP, `EXE_TGEU_OP: begin
+					if(~reg1_lt_reg2) begin
+						trapassert <= `TrapAssert;
+					end
+				end
+				`EXE_TLT_OP, `EXE_TLTI_OP, `EXE_TLTIU_OP, `EXE_TLTU_OP: begin
+					if(reg1_lt_reg2) begin
+						trapassert <= `TrapAssert;
+					end
+				end
+				`EXE_TNE_OP, `EXE_TNEI_OP: begin
+					if(reg1_i != reg2_i) begin
+						trapassert <= `TrapAssert;
+					end
+				end
+				default: begin
+					trapassert <= `TrapNotAssert;
+				end
+			endcase
+		end
+	end
 
     // get HI, LO with bypass
 	always @ (*) begin
@@ -322,9 +369,11 @@ module ex (
     wd_o <= wd_i;	 
 	if(((aluop_i == `EXE_ADD_OP) || (aluop_i == `EXE_ADDI_OP) || 
 	   (aluop_i == `EXE_SUB_OP)) && (sum_overflow == 1'b1)) begin
-	 	wreg_o <= `WriteDisable;
+	 	wreg_o   <= `WriteDisable;
+        ovassert <= 1'b1;
 	 end else begin
-	  wreg_o <= wreg_i;
+	  wreg_o     <= wreg_i;
+      ovassert   <= 1'b0;
      end
 
     case (alusel_i) 

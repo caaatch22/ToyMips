@@ -18,6 +18,11 @@ module sopc(
   wire[`RegBus]      mem_data_o;
   wire[3:0]          mem_sel_i;  
   wire               mem_ce_i;  
+
+  wire[5:0]          interrupt;
+  wire               timer_interrupt;
+
+  assign interrupt = {5'b00000, timer_interrupt};
  
 
     cpu_path cpu_path0(
@@ -28,12 +33,16 @@ module sopc(
 		.rom_data_i(inst),
 		.rom_ce_o(rom_ce),
 
+    	.interrupt_i(interrupt),
+
 		.ram_we_o(mem_we_i),
 		.ram_addr_o(mem_addr_i),
 		.ram_sel_o(mem_sel_i),
 		.ram_data_o(mem_data_i),
 		.ram_data_i(mem_data_o),
-		.ram_ce_o(mem_ce_i)		
+		.ram_ce_o(mem_ce_i),
+
+		.timer_interrupt_o(timer_interrupt)		
 	
 	);
 	

@@ -3,7 +3,10 @@
 module pc_reg (
     input                    clk, 
     input                    rst,
-    input [5: 0]             stall, 
+    input [5: 0]             stall,
+
+    input                    flush,
+    input [`RegBus]          new_pc, 
 
     // from decode phase, for J-type inst
     input                    branch_flag_i,
@@ -16,6 +19,8 @@ module pc_reg (
   always @ (posedge clk or posedge rst) begin
     if (ce == `ChipDisable) begin
         pc <= 32'h0000_0000;
+    end else if(flush == `Flush) begin
+        pc <= new_pc;
     end else if(stall[0] == `NoStop) begin
         if(branch_flag_i == `DoBranch) begin
             pc <= branch_addr_i;

@@ -5,7 +5,8 @@ module id_ex(
     input                         clk,
     input                         rst,
 
-    input [5:0]                   stall,  
+    input [5:0]                   stall, 
+    input                         flush, 
 	
 	// message from instruction decode
     input [`AluOpBus]             id_aluop,
@@ -19,7 +20,9 @@ module id_ex(
     input wire                    id_is_in_delayslot,
     input wire                    next_inst_in_delayslot_i,		
 
-    input [`RegBus]               id_inst,   // for lw, sw		
+    input [`RegBus]               id_inst,   // for lw, sw	
+    input [`RegBus]               id_cur_inst_addr,
+    input [31: 0]                 id_excepttype,	
     
 	// send to execute
     output reg[`AluOpBus]         ex_aluop,
@@ -33,7 +36,10 @@ module id_ex(
     output reg                    ex_is_in_delayslot,
     output reg                    is_in_delayslot_o,
 
-    output reg[`RegBus]           ex_inst
+    output reg[`RegBus]           ex_inst,
+
+    output reg[`RegBus]           ex_cur_inst_addr,
+    output reg[31: 0]             ex_excepttype	
 
 );
 
@@ -49,6 +55,21 @@ module id_ex(
         ex_is_in_delayslot <= `NotInDelaySlot;
         is_in_delayslot_o  <= `NotInDelaySlot;		
         ex_inst            <= `ZeroWord;
+        ex_excepttype      <= `ZeroWord;
+        ex_cur_inst_addr   <= `ZeroWord;
+    end else if(flush == `Flush) begin
+        ex_aluop           <= `EXE_NOP_OP;
+        ex_alusel          <= `EXE_RES_NOP;
+        ex_reg1            <= `ZeroWord;
+        ex_reg2            <= `ZeroWord;
+        ex_wd              <= `NOPRegAddr;
+        ex_wreg            <= `WriteDisable;
+        ex_link_addr       <= `ZeroWord;
+        ex_is_in_delayslot <= `NotInDelaySlot;
+        is_in_delayslot_o  <= `NotInDelaySlot;		
+        ex_inst            <= `ZeroWord;
+        ex_excepttype      <= `ZeroWord;
+        ex_cur_inst_addr   <= `ZeroWord;
     // for no delay slot, we block next inst
     end else if(id_is_in_delayslot == 1'b1) begin
         ex_aluop           <= `EXE_NOP_OP;
