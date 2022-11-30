@@ -32,11 +32,11 @@ always @(*) begin
         stall  <= 6'b000000;
 		case (excepttype_i)
 		    32'h00000001: new_pc <= 32'h00000020;  //interrupt
-			32'h00000008: new_pc <= 32'h00000040;//syscal 
-			32'h0000000a: new_pc <= 32'h00000040;//inst_invalid
-			32'h0000000d: new_pc <= 32'h00000040; //trap
-		    32'h0000000c: new_pc <= 32'h00000040; //ov
-		    32'h0000000e: new_pc <= cp0_epc_i;    //eret
+			32'h00000008: new_pc <= 32'h00000040;  //syscal 
+			32'h0000000a: new_pc <= 32'h00000040;  //inst_invalid
+			32'h0000000d: new_pc <= 32'h00000040;  //trap
+		    32'h0000000c: new_pc <= 32'h00000040;  //ov
+		    32'h0000000e: new_pc <= cp0_epc_i;     //eret
 		    default: ;
 		endcase 
     end else if(stallreq_from_ex == `Stop) begin
