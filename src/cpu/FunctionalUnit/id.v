@@ -556,8 +556,9 @@ module id (
             alusel_o    <= `EXE_RES_NOP;
             wreg_o      <= `WriteDisable;
             instvalid   <= `InstValid;	   
-            reg1_read_o <= `ReadDisable;
-            reg2_read_o <= `ReadEnable;
+            reg1_read_o <= `ReadEnable;
+            reg2_read_o <= `ReadDisable;
+            reg1_addr_o <= rt;
         end
     end
 

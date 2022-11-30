@@ -1,7 +1,7 @@
 `include "defines.v"
 
 module cp0_reg(
-    input                       clk,
+    input                        clk,
     input                        rst,
 
     input                        we_i,
@@ -31,7 +31,7 @@ module cp0_reg(
         cause_o              <= `ZeroWord;
         epc_o                <= `ZeroWord;
         config_o             <= 32'h00008000;
-        PRId_o               <= `ZeroWord;   // !! TODO
+        PRId_o               <= 32'b00000000010011000000000100000010;   // !! TODO
         timer_interrupt_o    <= `ZeroWord;
     end else begin
         count_o        <= count_o + 1;
