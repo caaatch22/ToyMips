@@ -7,9 +7,6 @@
 # Visual Studio Code
 .vscode/
 
-# output
-*.vcd
-
 # testbech
-*tb
-*tb.v
+src/tb
+src/*.vcd
