@@ -546,7 +546,7 @@ module id (
         if(inst_i[25:21] == 5'b00000 && inst_i[10:3] == 8'b00000000) begin
             aluop_o     <= `EXE_MFC0_OP;
             alusel_o    <= `EXE_RES_MOVE;
-            waddr_o     <= rt;
+            wd_o        <= rt;
             wreg_o      <= `WriteEnable;
 			instvalid   <= `InstValid;
             reg1_read_o <= `ReadDisable;

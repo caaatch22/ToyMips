@@ -21,9 +21,9 @@ module ex_mem(
 	input [`RegBus]          ex_reg2,
 
 	// for cp0
-	input wire               ex_cp0_reg_we,
-	input wire[4:0]          ex_cp0_reg_waddr,
-	input wire[`RegBus]      ex_cp0_reg_data,	
+	input                    ex_cp0_reg_we,
+	input [4:0]              ex_cp0_reg_waddr,
+	input [`RegBus]          ex_cp0_reg_data,	
 
 	// send to mem
 	output reg[`RegAddrBus]  mem_wd,

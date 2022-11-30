@@ -32,14 +32,15 @@ module ex (
 
     // forward from mem, wb to solve hazard of cp0
     input                     mem_cp0_reg_we,
-    input                     mem_cp0_reg_waddr,
-    input                     mem_cp0_reg_data,
+    input [4:0]               mem_cp0_reg_waddr,
+    input [`RegBus]           mem_cp0_reg_data,
     input                     wb_cp0_reg_we,
-    input                     wb_cp0_reg_waddr,
-    input                     wb_cp0_reg_data,
+    input [4:0]               wb_cp0_reg_waddr,
+    input [`RegBus]           wb_cp0_reg_data,
 
-    input                     cp0_reg_data_i,
-    input                     cp0_reg_raddr_o,
+    // connect with CP0 
+    input [`RegBus]           cp0_reg_data_i,
+    output reg[4:0]           cp0_reg_raddr_o,
 
     // connect with module div
 	input [`DoubleRegBus]     div_result_i,
@@ -67,7 +68,7 @@ module ex (
 
     output reg                cp0_reg_we_o,
     output reg[4:0]           cp0_reg_waddr_o,
-    output reh[`RegBus]       cp0_reg_data_o,
+    output reg[`RegBus]       cp0_reg_data_o,
 
     output reg                stallreq
 
@@ -368,7 +369,7 @@ module ex (
 		cp0_reg_data_o  <= `ZeroWord;
 	end else if(aluop_i == `EXE_MTC0_OP) begin
         cp0_reg_waddr_o <= inst_i[15:11];
-		cp0_reg_we_     <= `WriteEnable;
+		cp0_reg_we_o    <= `WriteEnable;
 		cp0_reg_data_o  <= reg1_i;
     end else begin
 	    cp0_reg_waddr_o <= 5'b00000;

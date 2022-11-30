@@ -1,25 +1,26 @@
 `include "defines.v"
-`include "./cpu/FunctionalUnit/pc_reg.v"
+`include "./cpu/Registers/pc_reg.v"
 `include "./cpu/Latch/if_id.v"
 `include "./cpu/FunctionalUnit/id.v"
-`include "./cpu/FunctionalUnit/regfile.v"
+`include "./cpu/Registers/regfile.v"
 `include "./cpu/Latch/id_ex.v"
 `include "./cpu/FunctionalUnit/ex.v"
 `include "./cpu/Latch/ex_mem.v"
 `include "./cpu/FunctionalUnit/mem.v"
 `include "./cpu/Latch/mem_wb.v"
-`include "./cpu/FunctionalUnit/hilo_reg.v"
+`include "./cpu/Registers/hilo_reg.v"
 `include "./cpu/FunctionalUnit/ctrl.v"
 `include "./cpu/FunctionalUnit/div.v"
-`include "./cpu/FunctionalUnit/LLbit_reg.v"
-
+`include "./cpu/Registers/LLbit_reg.v"
+`include "./cpu/Registers/cp0_reg.v"
 
 module cpu_path(
 
 	input clk,
 	input rst,
 	
- 
+	input  [5:0]      interrupt_i,
+
 	input  [`RegBus]  rom_data_i,
 	output [`RegBus]  rom_addr_o,
 	output wire       rom_ce_o,
@@ -30,7 +31,9 @@ module cpu_path(
 	output [`RegBus]  ram_data_o,
 	output            ram_we_o,
 	output [3:0]      ram_sel_o,
-	output wire       ram_ce_o
+	output            ram_ce_o,
+
+	output wire       timer_int_o
 	
 );
 
@@ -72,6 +75,10 @@ module cpu_path(
 	wire[`RegBus]      ex_reg1_o;
 	wire[`RegBus]      ex_reg2_o;
 
+	wire               ex_cp0_reg_we_o;
+	wire[4:0]          ex_cp0_reg_waddr_o;
+	wire[`RegBus]      ex_cp0_reg_data_o; 
+
 	//连接EX/MEM模块的输出与访存阶段MEM模块的输入
 	wire               mem_wreg_i;
 	wire[`RegAddrBus]  mem_wd_i;
@@ -85,6 +92,10 @@ module cpu_path(
 	wire[`RegBus]      mem_reg1_i;
 	wire[`RegBus]      mem_reg2_i;
 
+	wire               mem_cp0_reg_we_i;
+	wire[4:0]          mem_cp0_reg_waddr_i;
+	wire[`RegBus]      mem_cp0_reg_data_i;
+
 	//连接访存阶段MEM模块的输出与MEM/WB模块的输入
 	wire               mem_wreg_o;
 	wire[`RegAddrBus]  mem_wd_o;
@@ -92,6 +103,10 @@ module cpu_path(
 	wire[`RegBus]      mem_hi_o;
 	wire[`RegBus]      mem_lo_o;
 	wire               mem_whilo_o;
+
+	wire               mem_cp0_reg_we_o;
+	wire[4:0]          mem_cp0_reg_waddr_o;
+	wire[`RegBus]      mem_cp0_reg_data_o;
 	
 	//连接MEM/WB模块的输出与回写阶段的输入	
 	wire               wb_wreg_i;
@@ -100,6 +115,10 @@ module cpu_path(
 	wire[`RegBus]      wb_hi_i;
 	wire[`RegBus]      wb_lo_i;
 	wire               wb_whilo_i;
+
+	wire               wb_cp0_reg_we_i;
+	wire[4:0]          wb_cp0_reg_waddr_i;
+	wire[`RegBus]      wb_cp0_reg_data_i;
 	
 	//连接译码阶段ID模块与通用寄存器Regfile模块
 	wire               reg1_read;
@@ -130,6 +149,9 @@ module cpu_path(
 	wire[5:0]          stall;
 	wire               stallreq_from_id;
 	wire               stallreq_from_ex;
+
+  wire[`RegBus]        cp0_data_o;
+  wire[4:0]            cp0_raddr_i;
 
   //pc_reg例化
 	pc_reg pc_reg0(
@@ -269,6 +291,24 @@ module cpu_path(
 	  	.link_addr_i(ex_link_addr_i),
 		.is_in_delayslot_i(ex_is_in_delayslot_i),
 
+		//访存阶段的指令是否要写CP0，用来检测数据相关
+  		.mem_cp0_reg_we(mem_cp0_reg_we_o),
+		.mem_cp0_reg_waddr(mem_cp0_reg_waddr_o),
+		.mem_cp0_reg_data(mem_cp0_reg_data_o),
+	
+		//回写阶段的指令是否要写CP0，用来检测数据相关
+  		.wb_cp0_reg_we(wb_cp0_reg_we_i),
+		.wb_cp0_reg_waddr(wb_cp0_reg_waddr_i),
+		.wb_cp0_reg_data(wb_cp0_reg_data_i),
+
+		.cp0_reg_data_i(cp0_data_o),
+		.cp0_reg_raddr_o(cp0_raddr_i),
+		
+		//向下一流水级传递，用于写CP0中的寄存器
+		.cp0_reg_we_o(ex_cp0_reg_we_o),
+		.cp0_reg_waddr_o(ex_cp0_reg_waddr_o),
+		.cp0_reg_data_o(ex_cp0_reg_data_o),	  
+
 		.wb_hi_i(wb_hi_i),
 		.wb_lo_i(wb_lo_i),
 		.wb_whilo_i(wb_whilo_i),
@@ -320,6 +360,10 @@ module cpu_path(
 		.ex_mem_addr(ex_mem_addr_o),
 		.ex_reg2(ex_reg2_o),
 
+		.ex_cp0_reg_we(ex_cp0_reg_we_o),
+		.ex_cp0_reg_waddr(ex_cp0_reg_waddr_o),
+		.ex_cp0_reg_data(ex_cp0_reg_data_o),
+
 		//送到访存阶段MEM模块的信息
 		.mem_wd(mem_wd_i),
 		.mem_wreg(mem_wreg_i),
@@ -327,6 +371,10 @@ module cpu_path(
 		.mem_hi(mem_hi_i),
 		.mem_lo(mem_lo_i),
 		.mem_whilo(mem_whilo_i),
+
+		.mem_cp0_reg_we(mem_cp0_reg_we_i),
+		.mem_cp0_reg_waddr(mem_cp0_reg_waddr_i),
+		.mem_cp0_reg_data(mem_cp0_reg_data_i),
 
   		.mem_aluop(mem_aluop_i),
 		.mem_mem_addr(mem_mem_addr_i),
@@ -353,6 +401,14 @@ module cpu_path(
 	
 		//来自memory的信息
 		.mem_data_i(ram_data_i),
+
+		.cp0_reg_we_i(mem_cp0_reg_we_i),
+		.cp0_reg_waddr_i(mem_cp0_reg_waddr_i),
+		.cp0_reg_data_i(mem_cp0_reg_data_i),
+
+		.cp0_reg_we_o(mem_cp0_reg_we_o),
+		.cp0_reg_waddr_o(mem_cp0_reg_waddr_o),
+		.cp0_reg_data_o(mem_cp0_reg_data_o),
 	  
 		//送到MEM/WB模块的信息
 		.wd_o(mem_wd_o),
@@ -384,6 +440,10 @@ module cpu_path(
 		.mem_hi(mem_hi_o),
 		.mem_lo(mem_lo_o),
 		.mem_whilo(mem_whilo_o),	
+
+		.mem_cp0_reg_we(mem_cp0_reg_we_o),
+		.mem_cp0_reg_waddr(mem_cp0_reg_waddr_o),
+		.mem_cp0_reg_data(mem_cp0_reg_data_o),	
 	
 		//送到回写阶段的信息
 		.wb_wd(wb_wd_i),
@@ -391,7 +451,11 @@ module cpu_path(
 		.wb_wdata(wb_wdata_i),
 		.wb_hi(wb_hi_i),
 		.wb_lo(wb_lo_i),
-		.wb_whilo(wb_whilo_i)	
+		.wb_whilo(wb_whilo_i),
+
+		.wb_cp0_reg_we(wb_cp0_reg_we_i),
+		.wb_cp0_reg_waddr(wb_cp0_reg_waddr_i),
+		.wb_cp0_reg_data(wb_cp0_reg_data_i)
 									       	
 	);
 
@@ -446,6 +510,26 @@ module cpu_path(
 		// read port
 		.LLbit_o(LLbit_o)
 	
+	);
+
+	cp0_reg cp0_reg0(
+		.clk(clk),
+		.rst(rst),
+		
+		.we_i(wb_cp0_reg_we_i),
+		.waddr_i(wb_cp0_reg_waddr_i),
+		.raddr_i(cp0_raddr_i),
+		.data_i(wb_cp0_reg_data_i),
+		
+		//.excepttype_i(mem_excepttype_o),
+		.interrupt_i(interrupt_i),
+		//.current_inst_addr_i(mem_current_inst_address_o),
+		//.is_in_delayslot_i(mem_is_in_delayslot_o),
+		
+		.data_o(cp0_data_o),
+		
+		
+		.timer_interrupt_o(timer_interrupt_o)  			
 	);
 
 endmodule
