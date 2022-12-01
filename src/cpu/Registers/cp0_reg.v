@@ -35,8 +35,8 @@ module cp0_reg(
         cause_o              <= `ZeroWord;
         epc_o                <= `ZeroWord;
         config_o             <= 32'h00008000;
-        PRId_o               <= 32'b00000000010011000000000100000010;   // !! TODO
-        timer_interrupt_o    <= `ZeroWord;
+        PRId_o               <= 32'h004c0102;   // !! TODO
+        timer_interrupt_o    <= `InterruptNotAssert;
     end else begin
         count_o        <= count_o + 1;
         cause_o[15:10] <= interrupt_i;
@@ -52,7 +52,7 @@ module cp0_reg(
                 `CP0_REG_EPC :      epc_o    <= data_i;
                 `CP0_REG_COMPARE: begin
                     compare_o                <= data_i;
-                    timer_interrupt_o        <= `InterruptAssert;    
+                    timer_interrupt_o        <= `InterruptNotAssert;    
                 end  
                 `CP0_REG_CAUSE: begin
                   cause_o[9:8] <= data_i[9:8];
