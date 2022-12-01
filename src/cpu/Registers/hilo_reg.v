@@ -23,6 +23,9 @@ module hilo_reg(
     end else if((we == `WriteEnable)) begin
         hi_o <= hi_i;
         lo_o <= lo_i;
+        // for debug
+        $display("reg:hi<=%h",hi_i);
+        $display("reg:lo<=%h",lo_i);
     end
   end
 

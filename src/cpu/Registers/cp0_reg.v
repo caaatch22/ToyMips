@@ -63,11 +63,11 @@ module cp0_reg(
         end
 
         case(excepttype_i)
-				    32'h00000001: begin       //外部中断
-    					  if(is_in_delayslot_i == `InDelaySlot ) begin
-						        epc_o       <= cur_inst_addr_i - 4 ;
-						        cause_o[31] <= 1'b1;
-					      end else begin
+			32'h00000001: begin       //外部中断
+    		    if(is_in_delayslot_i == `InDelaySlot ) begin
+				    epc_o       <= cur_inst_addr_i - 4 ;
+					cause_o[31] <= 1'b1;
+			    end else begin
                     epc_o       <= cur_inst_addr_i;
                     cause_o[31] <= 1'b0;
                 end
@@ -75,32 +75,32 @@ module cp0_reg(
                 cause_o[6:2]    <= 5'b00000;
             end
             32'h00000008:	begin       // syscall
-					      if(status_o[1] == 1'b0) begin
-						        if(is_in_delayslot_i == `InDelaySlot ) begin
-							          epc_o       <= cur_inst_addr_i - 4 ;
-							          cause_o[31] <= 1'b1;
-						        end else begin
+				if(status_o[1] == 1'b0) begin
+				    if(is_in_delayslot_i == `InDelaySlot ) begin
+					    epc_o       <= cur_inst_addr_i - 4 ;
+						cause_o[31] <= 1'b1;
+					end else begin
                         epc_o       <= cur_inst_addr_i;
                         cause_o[31] <= 1'b0;
-						        end
-					      end
+					end
+				end
                 status_o[1]  <= 1'b1;
                 cause_o[6:2] <= 5'b01000;			
-				    end
-				    32'h0000000a:	begin         // invalid inst
-					      if(status_o[1] == 1'b0) begin
-						        if(is_in_delayslot_i == `InDelaySlot ) begin
-							          epc_o       <= cur_inst_addr_i - 4 ;
-							          cause_o[31] <= 1'b1;
-						        end else begin
+			end
+			32'h0000000a:	begin         // invalid inst
+			    if(status_o[1] == 1'b0) begin
+				    if(is_in_delayslot_i == `InDelaySlot ) begin
+					    epc_o       <= cur_inst_addr_i - 4 ;
+						cause_o[31] <= 1'b1;
+					end else begin
                         epc_o       <= cur_inst_addr_i;
                         cause_o[31] <= 1'b0;
                     end
-					      end
+				end
                 status_o[1]  <= 1'b1;
                 cause_o[6:2] <= 5'b01010;					
-				    end
-				    32'h0000000d: begin           // trap
+			end
+			32'h0000000d: begin           // trap
                 if(status_o[1] == 1'b0) begin
                     if(is_in_delayslot_i == `InDelaySlot ) begin
                         epc_o       <= cur_inst_addr_i - 4 ;
@@ -140,16 +140,16 @@ module cp0_reg(
     if(rst == `RstEnable) begin
       data_o <= `ZeroWord;
 		end else begin
-				case (raddr_i) 
-				`CP0_REG_COUNT:    data_o <= count_o;
+			case (raddr_i) 
+				`CP0_REG_COUNT:      data_o <= count_o;
 				`CP0_REG_COMPARE:	 data_o <= compare_o;
 				`CP0_REG_STATUS:	 data_o <= status_o;
-				`CP0_REG_CAUSE:	   data_o <= cause_o;
+				`CP0_REG_CAUSE:	     data_o <= cause_o;
 				`CP0_REG_EPC:	     data_o <= epc_o ;
-				`CP0_REG_PRId:	   data_o <= PRId_o ;
+				`CP0_REG_PRId:	     data_o <= PRId_o ;
 				`CP0_REG_CONFIG:	 data_o <= config_o ;				
 				default: 	begin end			
-				endcase  //case addr_i			
+			endcase  //case addr_i			
 		end   
   end     
 

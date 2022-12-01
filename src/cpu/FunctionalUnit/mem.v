@@ -82,6 +82,7 @@ module mem(
 
   assign is_in_delayslot_o = is_in_delayslot_i;
   assign cur_inst_addr_o   = cur_inst_addr_i;
+  assign cp0_epc_o = cp0_epc;
 
   always @(*) begin
 	if(rst == `RstEnable) begin
@@ -126,7 +127,7 @@ module mem(
         wdata_o <= wdata_i;
 		hi_o    <= hi_i;
 		lo_o    <= lo_i;
-		whilo_o <= `WriteEnable;
+		whilo_o <= whilo_i;
 
 		mem_we     <= `WriteDisable;
 		mem_addr_o <= `ZeroWord;

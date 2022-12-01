@@ -85,7 +85,7 @@ module mem_wb(
 		wb_wdata         <= mem_wdata;
 		wb_hi            <= mem_hi;
 		wb_lo            <= mem_lo;
-		wb_whilo         <= `WriteEnable;
+		wb_whilo         <= mem_whilo;
 		wb_LLbit_we      <= mem_LLbit_we;
 		wb_LLbit_value   <= mem_LLbit_value;
 		wb_cp0_reg_we    <= mem_cp0_reg_we;
