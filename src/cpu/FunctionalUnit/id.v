@@ -181,7 +181,7 @@ module id (
                 end
                 `EXE_SLLV: begin
 		            wreg_o      <= `WriteEnable;
-		            aluop_o     <= `EXE_SLLV_OP;
+		            aluop_o     <= `EXE_SLL_OP;
 		            alusel_o    <= `EXE_RES_SHIFT;
 		            reg1_read_o <= `ReadEnable;
 		            reg2_read_o <= `ReadEnable;
@@ -189,7 +189,7 @@ module id (
                 end
                 `EXE_SRLV: begin
 		            wreg_o      <= `WriteEnable;
-		            aluop_o     <= `EXE_SRLV_OP;
+		            aluop_o     <= `EXE_SRL_OP;
 		            alusel_o    <= `EXE_RES_SHIFT;
 		            reg1_read_o <= `ReadEnable;
 		            reg2_read_o <= `ReadEnable;
@@ -197,7 +197,7 @@ module id (
                 end
                 `EXE_SRAV: begin
 		            wreg_o      <= `WriteEnable;
-		            aluop_o     <= `EXE_SRAV_OP;
+		            aluop_o     <= `EXE_SRA_OP;
 		            alusel_o    <= `EXE_RES_SHIFT;
 		            reg1_read_o <= `ReadEnable;
 		            reg2_read_o <= `ReadEnable;
