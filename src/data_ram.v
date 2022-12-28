@@ -1,3 +1,4 @@
+
 module data_ram(
 
 	input clk,
@@ -24,7 +25,6 @@ module data_ram(
 			if (sel[2] == 1'b1) data_mem2[addr[`DataMemNumLog2+1:2]] <= data_i[23:16];
 		    if (sel[1] == 1'b1) data_mem1[addr[`DataMemNumLog2+1:2]] <= data_i[15:8];
 			if (sel[0] == 1'b1) data_mem0[addr[`DataMemNumLog2+1:2]] <= data_i[7:0];
-			$display("dm:%d<=%h", addr,data_i);
 		end
 	end
 	
