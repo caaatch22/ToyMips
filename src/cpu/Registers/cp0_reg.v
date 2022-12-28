@@ -1,5 +1,3 @@
-`include "defines.v"
-
 module cp0_reg(
     input                        clk,
     input                        rst,

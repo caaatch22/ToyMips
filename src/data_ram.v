@@ -1,5 +1,3 @@
-`include "defines.v"
-
 module data_ram(
 
 	input clk,

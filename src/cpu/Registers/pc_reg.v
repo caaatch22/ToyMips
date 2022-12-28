@@ -1,5 +1,3 @@
-`include "defines.v"
-
 module pc_reg (
     input                    clk, 
     input                    rst,
@@ -18,7 +16,7 @@ module pc_reg (
   
   always @ (posedge clk or posedge rst) begin
     if (ce == `ChipDisable) begin
-        pc <= 32'h0000_0000;
+        pc <= 32'h0000_3000;
     end else if(flush == `Flush) begin
         pc <= new_pc;
     end else if(stall[0] == `NoStop) begin

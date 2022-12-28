@@ -1,5 +1,3 @@
-`include "defines.v"
-
 module if_id (
     input clk,
     input rst,

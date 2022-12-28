@@ -1,5 +1,3 @@
-`include "defines.v"
-
 // ctrl whether pasuse the pipeline
 module ctrl (
     input               rst,

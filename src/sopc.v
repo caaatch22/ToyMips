@@ -1,8 +1,3 @@
-`include "defines.v"
-`include "./cpu/cpu_path.v"
-`include "inst_rom.v"
-`include "data_ram.v"
-
 module sopc(
 	input wire clk,
 	input wire rst

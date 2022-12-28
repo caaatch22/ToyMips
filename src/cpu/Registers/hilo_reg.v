@@ -1,5 +1,3 @@
-`include "defines.v"
-
 module hilo_reg(
 
     input             clk,

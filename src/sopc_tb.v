@@ -19,8 +19,8 @@ module sopc_tb();
       
   initial begin
     rst = `RstEnable;
-    #9 rst= `RstDisable;
-    #1000 $finish;
+    #195 rst= `RstDisable;
+    #10000 $finish;
   end
        
     sopc sopc0(

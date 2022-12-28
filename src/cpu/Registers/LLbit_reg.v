@@ -1,5 +1,3 @@
-`include "defines.v"
-
 module LLbit_reg(
 
     input clk,

@@ -1,5 +1,3 @@
-`include "defines.v"
-
 module id (
     input                   rst,
     input [`InstAddrBus]    pc_i,
@@ -647,62 +645,62 @@ module id (
     end
 	`EXE_REGIMM_INST: begin
         case (rt)
-            // `EXE_BGEZ:	begin
-			//     wreg_o <= `WriteDisable;		
-            //     aluop_o <= `EXE_BGEZ_OP;
-		  	// 	alusel_o <= `EXE_RES_JUMP_BRANCH; 
-            //     reg1_read_o <= `ReadEnable;	
-            //     reg2_read_o <= `ReadDisable;
-		  	// 	instvalid <= `InstValid;	
-		  	// 	if(reg1_o[31] == 1'b0) begin
-			//         branch_addr_o <= pc_plus_4 + imm_sll2_signedext;
-			//     	branch_flag_o <= `DoBranch;
-			//     	next_inst_in_delayslot_o <= `InDelaySlot;		  	
-		    // 	end
-            // end
-			// `EXE_BGEZAL: begin
-            //     wreg_o <= `WriteEnable;		
-            //     aluop_o <= `EXE_BGEZAL_OP;
-		  	// 	alusel_o <= `EXE_RES_JUMP_BRANCH; 
-            //     reg1_read_o <= `ReadEnable;	
-            //     reg2_read_o <= `ReadDisable;
-		  	// 	link_addr_o <= pc_plus_8; 
-		  	// 	wd_o <= 5'b11111;  	
-            //     instvalid <= `InstValid;
-		  	// 	if(reg1_o[31] == 1'b0) begin
-			//         branch_addr_o <= pc_plus_4 + imm_sll2_signedext;
-			//     	branch_flag_o <= `DoBranch;
-			//     	next_inst_in_delayslot_o <= `InDelaySlot;
-			// 	end
-			// end
-			// `EXE_BLTZ: begin
-			// 	wreg_o <= `WriteDisable;		
-            //     aluop_o <= `EXE_BGEZAL_OP;
-		  	// 	alusel_o <= `EXE_RES_JUMP_BRANCH; 
-            //     reg1_read_o <= `ReadEnable;	
-            //     reg2_read_o <= `ReadDisable;
-		  	// 	instvalid <= `InstValid;	
-		  	// 	if(reg1_o[31] == 1'b1) begin
-			//         branch_addr_o <= pc_plus_4 + imm_sll2_signedext;
-			//     	branch_flag_o <= `DoBranch;
-			//     	next_inst_in_delayslot_o <= `InDelaySlot;		  	
-			// 	end
-			// end
-			// `EXE_BLTZAL: begin
-			//     wreg_o <= `WriteEnable;		
-            //     aluop_o <= `EXE_BGEZAL_OP;
-		  	//     alusel_o <= `EXE_RES_JUMP_BRANCH; 
-            //     reg1_read_o <= `ReadEnable;	
-            //     reg2_read_o <= `ReadDisable;
-		  	// 	link_addr_o <= pc_plus_8;	
-		  	// 	wd_o <= 5'b11111; 
-            //     instvalid <= `InstValid;
-		  	// 	if(reg1_o[31] == 1'b1) begin
-			//         branch_addr_o <= pc_plus_4 + imm_sll2_signedext;
-			//     	branch_flag_o <= `DoBranch;
-			//     	next_inst_in_delayslot_o <= `InDelaySlot;
-			//     end
-		    // end
+            `EXE_BGEZ:	begin
+			    wreg_o <= `WriteDisable;		
+                aluop_o <= `EXE_BGEZ_OP;
+		  		alusel_o <= `EXE_RES_JUMP_BRANCH; 
+                reg1_read_o <= `ReadEnable;	
+                reg2_read_o <= `ReadDisable;
+		  		instvalid <= `InstValid;	
+		  		if(reg1_o[31] == 1'b0) begin
+			        branch_addr_o <= imm_bext;
+			    	branch_flag_o <= `DoBranch;
+			    	next_inst_in_delayslot_o <= `InDelaySlot;		  	
+		    	end
+            end
+			`EXE_BGEZAL: begin
+                wreg_o <= `WriteEnable;		
+                aluop_o <= `EXE_BGEZAL_OP;
+		  		alusel_o <= `EXE_RES_JUMP_BRANCH; 
+                reg1_read_o <= `ReadEnable;	
+                reg2_read_o <= `ReadDisable;
+		  		link_addr_o <= pc_plus_8; 
+		  		wd_o <= 5'b11111;  	
+                instvalid <= `InstValid;
+		  		if(reg1_o[31] == 1'b0) begin
+			        branch_addr_o <= imm_bext;
+			    	branch_flag_o <= `DoBranch;
+			    	next_inst_in_delayslot_o <= `InDelaySlot;
+				end
+			end
+			`EXE_BLTZ: begin
+				wreg_o <= `WriteDisable;		
+                aluop_o <= `EXE_BGEZAL_OP;
+		  		alusel_o <= `EXE_RES_JUMP_BRANCH; 
+                reg1_read_o <= `ReadEnable;	
+                reg2_read_o <= `ReadDisable;
+		  		instvalid <= `InstValid;	
+		  		if(reg1_o[31] == 1'b1) begin
+			        branch_addr_o <= imm_bext;
+			    	branch_flag_o <= `DoBranch;
+			    	next_inst_in_delayslot_o <= `InDelaySlot;		  	
+				end
+			end
+			`EXE_BLTZAL: begin
+			    wreg_o <= `WriteEnable;		
+                aluop_o <= `EXE_BGEZAL_OP;
+		  	    alusel_o <= `EXE_RES_JUMP_BRANCH; 
+                reg1_read_o <= `ReadEnable;	
+                reg2_read_o <= `ReadDisable;
+		  		link_addr_o <= pc_plus_8;	
+		  		wd_o <= 5'b11111; 
+                instvalid <= `InstValid;
+		  		if(reg1_o[31] == 1'b1) begin
+			        branch_addr_o <= imm_bext;
+			    	branch_flag_o <= `DoBranch;
+			    	next_inst_in_delayslot_o <= `InDelaySlot;
+			    end
+		    end
 			`EXE_TEQI: begin
 		  	    wreg_o      <= `WriteDisable;		
                 aluop_o     <= `EXE_TEQI_OP;
@@ -760,8 +758,21 @@ module id (
 		    default: ;
 		endcase
 	end		
+    `EXE_SPECIAL2_INST: begin
+        case (funct)
+            `EXE_MUL: begin
+                wreg_o      <= `WriteEnable;
+                aluop_o     <= `EXE_MUL_OP;
+                alusel_o    <= `EXE_RES_MUL;
+                reg1_read_o <= `ReadEnable;
+                reg2_read_o <= `ReadEnable;
+                instvalid   <= `InstValid;
+            end
+        endcase
+    end
+    endcase 
 
-    endcase // endcase opcode
+    // endcase opcode
 
     if (inst_i[31:21] == 11'b00000000000) begin
         case (funct)

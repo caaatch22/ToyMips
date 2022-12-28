@@ -1,5 +1,3 @@
-`include "defines.v"
-
 module ex (
     input rst,
 

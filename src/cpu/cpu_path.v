@@ -1,18 +1,18 @@
-`include "defines.v"
-`include "./cpu/Registers/pc_reg.v"
-`include "./cpu/Latch/if_id.v"
-`include "./cpu/FunctionalUnit/id.v"
-`include "./cpu/Registers/regfile.v"
-`include "./cpu/Latch/id_ex.v"
-`include "./cpu/FunctionalUnit/ex.v"
-`include "./cpu/Latch/ex_mem.v"
-`include "./cpu/FunctionalUnit/mem.v"
-`include "./cpu/Latch/mem_wb.v"
-`include "./cpu/Registers/hilo_reg.v"
-`include "./cpu/FunctionalUnit/ctrl.v"
-`include "./cpu/FunctionalUnit/div.v"
-`include "./cpu/Registers/LLbit_reg.v"
-`include "./cpu/Registers/cp0_reg.v"
+// `include "defines.v"
+// `include "./cpu/Registers/pc_reg.v"
+// `include "./cpu/Latch/if_id.v"
+// `include "./cpu/FunctionalUnit/id.v"
+// `include "./cpu/Registers/regfile.v"
+// `include "./cpu/Latch/id_ex.v"
+// `include "./cpu/FunctionalUnit/ex.v"
+// `include "./cpu/Latch/ex_mem.v"
+// `include "./cpu/FunctionalUnit/mem.v"
+// `include "./cpu/Latch/mem_wb.v"
+// `include "./cpu/Registers/hilo_reg.v"
+// `include "./cpu/FunctionalUnit/ctrl.v"
+// `include "./cpu/FunctionalUnit/div.v"
+// `include "./cpu/Registers/LLbit_reg.v"
+// `include "./cpu/Registers/cp0_reg.v"
 
 module cpu_path(
 
@@ -271,7 +271,7 @@ module cpu_path(
 	);
 
   //通用寄存器Regfile例化
-	regfile regfile1(
+	regfile regfile0(
 		.clk (clk),
 		.rst (rst),
 		.we	(wb_wreg_i),
