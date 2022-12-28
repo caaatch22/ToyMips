@@ -186,7 +186,6 @@ module ex (
                 else arithmetic_res = sum_res[31];
             end
             `EXE_SLTU_OP: arithmetic_res = reg1_i < reg2_i;
-            /*
             `EXE_CLZ_OP: begin
                 arithmetic_res = reg1_i[31] ? 0 : reg1_i[30] ? 1 : reg1_i[29] ? 2 :
 													 reg1_i[28] ? 3 : reg1_i[27] ? 4 : reg1_i[26] ? 5 :
@@ -213,11 +212,34 @@ module ex (
 													~reg1_i[4] ? 27 : ~reg1_i[3] ? 28 : ~reg1_i[2] ? 29 : 
 													~reg1_i[1] ? 30 : ~reg1_i[0] ? 31 : 32 ;
 			end
-			*/
             default: arithmetic_res = `ZeroWord;
             endcase
         end
     end
+
+    // for mul
+    //取得乘法操作的操作数，如果是有符号除法且操作数是负数，那么取反加一
+	assign opdata1_mult = (((aluop_i == `EXE_MUL_OP) || (aluop_i == `EXE_MULT_OP))
+							&& (reg1_i[31] == 1'b1)) ? (~reg1_i + 1) : reg1_i;
+
+    assign opdata2_mult = (((aluop_i == `EXE_MUL_OP) || (aluop_i == `EXE_MULT_OP))
+							&& (reg2_i[31] == 1'b1)) ? (~reg2_i + 1) : reg2_i;		
+
+    assign hilo_tmp = opdata1_mult * opdata2_mult;																				
+
+	always @ (*) begin
+		if(rst == `RstEnable) begin
+			mul_res <= {`ZeroWord,`ZeroWord};
+		end else if ((aluop_i == `EXE_MULT_OP) || (aluop_i == `EXE_MUL_OP))begin
+			if(reg1_i[31] ^ reg2_i[31] == 1'b1) begin
+				mul_res <= ~hilo_tmp + 1;
+			end else begin
+			  mul_res <= hilo_tmp;
+			end
+		end else begin
+			mul_res <= hilo_tmp;
+		end
+	end
 
     // trap
     always @ (*) begin
@@ -379,7 +401,7 @@ module ex (
         `EXE_RES_SHIFT:       wdata_o <= shift_res;
         `EXE_RES_MOVE:        wdata_o <= move_res;
         `EXE_RES_ARITHMETIC:  wdata_o <= arithmetic_res;
-        `EXE_RES_MUL:         wdata_o <= mul_res;
+        `EXE_RES_MUL:         wdata_o <= mul_res[31: 0];
         `EXE_RES_JUMP_BRANCH: wdata_o <= link_addr_i;
         default:              wdata_o <= `ZeroWord;
 	 endcase
@@ -390,6 +412,10 @@ module ex (
         whilo_o <= `WriteDisable;
         hi_o    <= `ZeroWord;
         lo_o    <= `ZeroWord;
+    end else if( (aluop_i == `EXE_MULT_OP) || (aluop_i == `EXE_MULTU_OP)) begin
+		whilo_o <= `WriteEnable;
+		hi_o    <= mul_res[63:32];
+	    lo_o    <= mul_res[31:0];		
     end else if( (aluop_i == `EXE_DIV_OP) || (aluop_i == `EXE_DIVU_OP)) begin
         whilo_o <= `WriteEnable;
         hi_o    <= div_result_i[63:32];

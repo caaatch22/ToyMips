@@ -768,6 +768,22 @@ module id (
                 reg2_read_o <= `ReadEnable;
                 instvalid   <= `InstValid;
             end
+            `EXE_CLZ: begin
+                wreg_o      <= `WriteEnable;
+                aluop_o     <= `EXE_CLZ_OP;
+                alusel_o    <= `EXE_RES_ARITHMETIC;
+                reg1_read_o <= `ReadEnable;
+                reg2_read_o <= `ReadDisable;
+                instvalid   <= `InstValid;        
+            end
+            `EXE_CLO: begin
+                wreg_o      <= `WriteEnable;
+                aluop_o     <= `EXE_CLO_OP;
+                alusel_o    <= `EXE_RES_ARITHMETIC;
+                reg1_read_o <= `ReadEnable;
+                reg2_read_o <= `ReadDisable;
+                instvalid   <= `InstValid;        
+            end
         endcase
     end
     endcase 
