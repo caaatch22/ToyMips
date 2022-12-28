@@ -103,8 +103,13 @@ module id (
   assign excepttype_o = {19'b0,excepttype_is_eret,2'b0,
   												instvalid, excepttype_is_syscall,8'b0};
   //assign excepttye_is_trapinst = 1'b0;
-  
-	assign cur_inst_addr_o = pc_i;
+    
+    // 防止将指令结束时候当作非法指令而引发异常
+    // 实际中不需要，只是为了测试方便
+    always @(*) begin
+        if (inst_i == 32'hxxxxxxxx)
+        instvalid <= `InstValid;
+    end
 
   // phase 1: instruction decode
   always @(*) begin
