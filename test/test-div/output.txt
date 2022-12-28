@@ -1,0 +1,10 @@
+reg:$ 2<=0000ffff
+reg:$ 2<=ffff0000
+reg:$ 2<=fffffff1
+reg:$ 3<=00000011
+reg:hi<=fffffff1
+reg:lo<=00000000
+reg:hi<=00000003
+reg:lo<=0f0f0f0e
+reg:hi<=00000002
+reg:lo<=ffffffff
