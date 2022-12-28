@@ -343,7 +343,7 @@ module id (
                 end
                 `EXE_DIVU: begin
                     wreg_o      <= `WriteDisable;
-                    aluop_o     <= `EXE_DIV_OP;
+                    aluop_o     <= `EXE_DIVU_OP;
                     reg1_read_o <= `ReadEnable;
                     reg2_read_o <= `ReadEnable;
                     instvalid   <= `InstValid;   
