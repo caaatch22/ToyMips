@@ -58,6 +58,7 @@ module cp0_reg(
                   cause_o[22]  <= data_i[22];
                 end
             endcase
+            $display("CP0:$%d<=%h", waddr_i, data_i);
         end
 
         case(excepttype_i)
