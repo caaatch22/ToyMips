@@ -802,8 +802,8 @@ module id (
 		  	    wreg_o      <= `WriteDisable;		
                 aluop_o     <= `EXE_TLTI_OP;
 		  	    alusel_o    <= `EXE_RES_NOP; 
-                reg1_read_o <= 1'b1;	
-                reg2_read_o <= 1'b0;	  	
+                reg1_read_o <= `ReadEnable;	
+                reg2_read_o <= `ReadDisable;	
 			    imm_fnl     <= {{16{inst_i[15]}}, inst_i[15:0]};		  	
 			    instvalid   <= `InstValid;	
 			end
@@ -906,7 +906,7 @@ module id (
                 inst_i[10: 0] == 11'b00000000000) begin
 		aluop_o     <= `EXE_MFC0_OP;
 		alusel_o    <= `EXE_RES_MOVE;
-		wd_o        <= inst_i[20:16];
+		wd_o        <= rt;
 		wreg_o      <= `WriteEnable;
 		instvalid   <= `InstValid;	   
 		reg1_read_o <= `ReadDisable;
@@ -918,7 +918,7 @@ module id (
 		wreg_o      <= `WriteDisable;
 		instvalid   <= `InstValid;	   
 		reg1_read_o <= `ReadEnable;
-	    reg1_addr_o <= inst_i[20:16];
+	    reg1_addr_o <= rt;
 		reg2_read_o <= `ReadDisable;				
 	end
 
