@@ -11,4 +11,9 @@
 src/tb
 src/*.vcd
 
+test/*/*.vcd
+test/*/output.txt
+test/*/test.vvp
+/test/*/rom.txt
+
 TODO.txt
