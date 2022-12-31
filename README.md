@@ -14,7 +14,7 @@ All instuctions supported are listed below.
 |jump | j, jal, jr, jalr | ✔ |
 | branch | beq, bne, bgez, bgtz, blez, bltz, bltzal, bgezal, | ✔|
 | move | mfhi, mflo, mthi, mtlo, movz, movn | ✔ | 
-|load-store| lb, lbu, lh, lhu, lw, sb, sh, sw|✔ |
+|load-store| lb, lbu, lh, lhu, lw, sb, sh, sw, ll, sc|✔ |
 | exception-related |eret, mfc0, mtc0, break, syscall,  |  |
 
 
@@ -86,7 +86,7 @@ cd test
 make <test-name>
 ```
 
-You may use gtkwave to see waveform with `dump.vcd` in `<test-name>` file. and `vvp <test-name>/test.vvp` to simulate. 
+You may use gtkwave to see waveform with `dump.vcd` in `<test-name>` file and `vvp <test-name>/test.vvp` to simulate. 
 
 ## License
 This project is released under [MIT license](https://github.com/caaatch22/ToyMips/blob/main/LICENSE).
